@@ -5,24 +5,36 @@
 //  Created by Josef Doležal on 05.10.14.
 //  Copyright (c) 2014 Josef Doležal. All rights reserved.
 //
+// preklad s prepinacem -g je pro debug, gdb --args ./copy zdroj cil 777
+// r
+// bt (backtrace)
+// q
+
+
 
 #include <stdio.h>
-#define LEN 666
+#include <stdlib.h>
+
 
 int main(int argc, char **argv) {
     char *zdroj;
     char *cil;
-    char buff[LEN];
+    char *buff;
     FILE *f1, *f2;
+    int d, len;
 
     // zadavani zdroje a cile pres argumenty
-    if (argc != 3) {
-        printf("Zadejte zdrojovy a cilovy soubor\n.");
-        return 1;
+    if (argc != 4) {
+        printf("Zadejte zdrojovy a cilovy soubor a velikost pameti.\n");
+        return 3;
     }
 
     zdroj = argv[1]; // arg 0 je nazev programu
     cil = argv[2];
+    len = atoi(argv[3]);
+
+    buff = malloc(len * sizeof(char)); //memory alloc
+
 
     if((f1 = fopen(zdroj, "rb")) == NULL) { // r: read, b: binary
         printf("Zdroj se nepodarilo otevrit\n");
@@ -31,16 +43,16 @@ int main(int argc, char **argv) {
 
     if((f2 = fopen(cil, "wb")) == NULL) { //w: write,
         printf("Cil se nepodarilo otevrit\n");
-        return 1;
+        return 2;
     }
 
     // cteni souboru pomoci bufferu
-    while (fread(buff, sizeof(char), LEN, f1)) {
-        fwrite(buff, sizeof(char), LEN, f1); // nesedi velikost ciloveho souboru kvuli konci cteni
-                                             // kdy je buffer vetsi nez zbytek souboru
+    while ((d = fread(buff, sizeof(char), LEN, f1))) {
+        fwrite(buff, sizeof(char), d, f1); // velikost souboru sedi, protoze se na konci souboru zapise
+                                           // velikost, ktera byla skutecne prectena
     }
 
-    fclose(f1);
+    fclose(f1); // uzavreni souboru
     fclose(f2);
 
     return 0;
