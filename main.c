@@ -8,11 +8,20 @@
 
 #include <stdio.h>
 
-int main() {
-    char *zdroj = "zdroj.txt";
-    char *cil = "cil.txt";
+int main(int argc, char **argv) {
+    char *zdroj;
+    char *cil;
     FILE *f1, *f2;
     int znak;
+
+    // zadavani zdroje a cile pres argumenty
+    if (argc != 3) {
+        printf("Zadejte zdrojovy a cilovy soubor\n.");
+        return 1;
+    }
+
+    zdroj = argv[1]; // arg 0 je nazev programu
+    cil = argv[2];
 
     if((f1 = fopen(zdroj, "rb")) == NULL) { // r: read, b: binary
         printf("Zdroj se nepodarilo otevrit\n");
@@ -24,7 +33,6 @@ int main() {
         return 1;
     }
 
-    // cteni zdroje po znaku
     while ((znak = fgetc(f1)) != EOF) {
         fputc(znak, f2);
     }
