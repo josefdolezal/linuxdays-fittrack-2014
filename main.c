@@ -7,12 +7,13 @@
 //
 
 #include <stdio.h>
+#define LEN 666
 
 int main(int argc, char **argv) {
     char *zdroj;
     char *cil;
+    char buff[LEN];
     FILE *f1, *f2;
-    int znak;
 
     // zadavani zdroje a cile pres argumenty
     if (argc != 3) {
@@ -33,8 +34,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    while ((znak = fgetc(f1)) != EOF) {
-        fputc(znak, f2);
+    // cteni souboru pomoci bufferu
+    while (fread(buff, sizeof(char), LEN, f1)) {
+        fwrite(buff, sizeof(char), LEN, f1); // nesedi velikost ciloveho souboru kvuli konci cteni
+                                             // kdy je buffer vetsi nez zbytek souboru
     }
 
     fclose(f1);
